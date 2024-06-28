@@ -14,12 +14,13 @@ public class CompraService {
     @Autowired
     private CompraRepository compraRepository;
 
-    public Compra realizarCompra(String usuarioId, List<Producto> productos) {
+    public Compra realizarCompra(String usuarioId, List<Producto> productos, int cantidad, LocalDate fecha, double total) {
         Compra compra = new Compra();
         compra.setUsuarioId(usuarioId);
         compra.setProductos(productos);
-        compra.setFecha(LocalDate.now()); 
-        compra.setTotal(productos.stream().mapToDouble(p -> p.getPrecio() * p.getCantidad()).sum());
+        compra.setCantidad(cantidad);
+        compra.setFecha(fecha); 
+        compra.setTotal(total);
         return compraRepository.save(compra);
     }
 
@@ -29,5 +30,26 @@ public class CompraService {
 
     public List<Compra> obtenerTodasLasCompras(){
         return compraRepository.findAll();
+    }
+
+    public Compra editarCompra(String compraId, List<Producto> nuevosProductos) {
+        Compra compraExistente = compraRepository.findById(compraId).orElse(null);
+        if (compraExistente == null) {
+            throw new RuntimeException("Compra no encontrada con ID: " + compraId);
+        }
+        
+        compraExistente.setProductos(nuevosProductos);
+        compraExistente.setTotal(nuevosProductos.stream().mapToDouble(p -> p.getPrecio() * p.getCantidad()).sum());
+        
+        return compraRepository.save(compraExistente);
+    }
+
+    public void eliminarCompra(String compraId) {
+        Compra compraExistente = compraRepository.findById(compraId).orElse(null);
+        if (compraExistente == null) {
+            throw new RuntimeException("Compra no encontrada con ID: " + compraId);
+        }
+        
+        compraRepository.delete(compraExistente);
     }
 }

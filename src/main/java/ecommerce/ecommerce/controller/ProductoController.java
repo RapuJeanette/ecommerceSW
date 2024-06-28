@@ -74,6 +74,7 @@ public class ProductoController {
         try { 
             Producto nuevoProducto = new Producto(
                 producto.getNombre(),
+                producto.getDescripcion(),
                 producto.getPrecio(),
                 producto.getCantidad(),
                 null,
@@ -107,8 +108,7 @@ public class ProductoController {
         if (productoExistente == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        producto.setId(id); // Asegurarse de que el id del producto a editar sea el mismo que el
-                            // proporcionado en la URL
+        producto.setId(id); 
         Producto productoEditado = productoRepository.save(producto);
         return new ResponseEntity<>(productoEditado, HttpStatus.OK);
     }

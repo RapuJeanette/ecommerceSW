@@ -1,6 +1,7 @@
 package ecommerce.ecommerce.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,6 +52,19 @@ public class CatalogoController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Catalogo> actualizarNombreCatalogo(@PathVariable("id") String id,
+            @RequestBody Map<String, String> requestBody) {
+        Catalogo catalogo = catalogoRepository.findById(id).orElse(null);
+        if (catalogo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        String nuevoNombre = requestBody.get("nombre");
+        catalogo.setNombre(nuevoNombre);
+        Catalogo catalogoActualizado = catalogoRepository.save(catalogo);
+        return new ResponseEntity<>(catalogoActualizado, HttpStatus.OK);
     }
 
 }
